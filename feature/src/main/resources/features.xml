@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="http-gateway-features">
+
+	<feature name="http-gateway-base" version="${project.version}" resolver="(obr)">
+		<feature dependency="true">camel-blueprint</feature>
+		<feature dependency="true">camel-core</feature>
+		<feature dependency="true">camel-cxf</feature>
+		<feature dependency="true">camel-spring</feature>
+		<feature dependency="true">http</feature>
+		<feature dependency="true">camel-http</feature>
+		<feature dependency="true">camel-jetty</feature>
+	</feature>
+</features>
