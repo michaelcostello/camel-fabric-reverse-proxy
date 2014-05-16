@@ -7,6 +7,16 @@
     <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
 
     <camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
+         <onException>
+		    <redeliveryPolicy maximumRedeliveries="1" />
+		    <handled>
+		      <constant>true</constant>
+		    </handled>
+		    <setHeader name="Exchange.HTTP_RESPONSE_CODE">
+		    	<constant>404</constant> <!-- TODO mcostello does this make sense -->
+		    </setHeader>
+		    <!-- TODO mcostell ideally this will deliver the http response back -->
+	    </onException>
         <route id="HttpProxyRoute">
             <from uri="jetty:http://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
 
