@@ -22,7 +22,7 @@ public class Router {
     private String resolveEndpointName(Exchange exchange) {
         // REAL CODE FOR MAPPING CAN GO HERE
         String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-        String endpoint = BASE_FABRIC_NAME + path.replace("/", "");
+        String endpoint = BASE_FABRIC_NAME + path.replaceFirst("/", "");
         LOG.info("Endpoint that the recipient list will use: {}", endpoint);
         return endpoint;
     }
