@@ -1,34 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:camel="http://camel.apache.org/schema/blueprint"
-	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
 	xsi:schemaLocation="
-		http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
 		http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
 		http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
-	
-	<cm:property-placeholder persistent-id="com.redhat.cigna.httpgateway">
-		<cm:default-properties>
-			<!-- jetty ssl configuration  -->
-			<cm:property name="gateway.server.bind.address" value="0.0.0.0" />
-			<cm:property name="gateway.server.bind.address.port" value="9000" />
-			<cm:property name="gateway.server.keystore.target.location" value="${keystore.path}" />
-			<cm:property name="gateway.server.keystore.filename" value="keystore.jks" />
-			<cm:property name="gateway.server.truststore.filename" value="cacerts.jks" />
-			<!-- TODO: mcostello setup key store  -->
-			<cm:property name="gateway.server.keystore.password" value="0r1g4m1C0ff33cup" />
-			<cm:property name="gateway.server.truststore.password" value="0r1g4m1C0ff33cup" />
-			<cm:property name="gateway.server.client.auth.needed" value="false" />
-			<cm:property name="gateway.placeholder.algorithm" value="PBEWithMD5AndDES" />
-		</cm:default-properties>
-	</cm:property-placeholder>
-	
-	<camel:camelContext id="httpGatewayContext">
-		<camel:route id="HttpProxyRoute">
-			<camel:from uri="jetty:http://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
- 			<camel:to uri="fabric:local"/>
-		</camel:route>
-	</camel:camelContext>
-	
+
+    <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
+
+    <camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
+        <route id="HttpProxyRoute">
+            <from uri="jetty:http://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
+
+            <log message="Going to send to ${header.recipientList}" />
+            <setHeader headerName="recipientList">
+                <method ref="recipientCreator" method="routePlease" />
+            </setHeader>
+            <removeHeader headerName="Host" />
+            <recipientList>
+                <simple>${header.recipientList}</simple>
+            </recipientList>
+
+        </route>
+
+
+        <!-- endpoints exposed in fabric-->
+        <route id="testRoute" autoStartup="true">
+            <from uri="fabric:gatewaytest:cxfrs:http://0.0.0.0:9001/?resourceClasses=com.redhat.httpgateway.TestCxfRsResource"/>
+            <log message="wooHoo!! did the routing correctly! for /test" />
+            <transform>
+                <constant>Test called successfully</constant>
+            </transform>
+        </route>
+        <route id="cheeseRoute" autoStartup="true">
+            <from uri="fabric:gatewaycheese:cxfrs:http://0.0.0.0:9002/?resourceClasses=com.redhat.httpgateway.CheeseCxfRsResource"/>
+            <log message="wooHoo!! did the routing correctly! for /cheese" />
+            <transform>
+                <constant>Cheese called successfully</constant>
+            </transform>
+        </route>
+        <route id="beerRoute" autoStartup="true">
+            <from uri="fabric:gatewaybeer:cxfrs:http://0.0.0.0:9003/?resourceClasses=com.redhat.httpgateway.BeerCxfRsResource"/>
+            <log message="wooHoo!! did the routing correctly! for /beer" />
+            <transform>
+                <constant>Beer called successfully</constant>
+            </transform>
+        </route>
+    </camelContext>
+
+
 		
 </blueprint>
