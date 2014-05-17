@@ -5,21 +5,24 @@
 		http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
 
     <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
-
-    <camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
+	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
          <onException>
+		    <exception>java.lang.Exception</exception>
 		    <redeliveryPolicy maximumRedeliveries="1" />
 		    <handled>
 		      <constant>true</constant>
 		    </handled>
-		    <setHeader name="Exchange.HTTP_RESPONSE_CODE">
+		    <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
 		    	<constant>404</constant> <!-- TODO mcostello does this make sense -->
 		    </setHeader>
-		    <!-- TODO mcostell ideally this will deliver the http response back -->
+		    <!-- mcostell ideally this will deliver the http response back -->
+		    <!-- <to uri="bean:failedLookup?method=failedLookup"/> -->
+		    <transform>
+		    	<simple>Unable to Lookup endpoint</simple>
+		    </transform>
 	    </onException>
         <route id="HttpProxyRoute">
             <from uri="jetty:http://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
-
             <log message="Going to send to ${header.recipientList}" />
             <setHeader headerName="recipientList">
                 <method ref="recipientCreator" method="routePlease" />
