@@ -15,8 +15,7 @@
 		    <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
 		    	<constant>404</constant> <!-- TODO mcostello does this make sense -->
 		    </setHeader>
-		    <!-- mcostell ideally this will deliver the http response back -->
-		    <!-- <to uri="bean:failedLookup?method=failedLookup"/> -->
+		    <!-- mcostell this will deliver the http response back -->
 		    <transform>
 		    	<simple>Unable to Lookup endpoint</simple>
 		    </transform>
