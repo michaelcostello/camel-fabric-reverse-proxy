@@ -11,8 +11,7 @@
 			<!-- jetty ssl configuration  -->
 			<cm:property name="gateway.server.bind.address" value="0.0.0.0" />
 			<cm:property name="gateway.server.bind.address.port" value="9000" />
-			<!-- <cm:property name="gateway.server.keystore.target.location" value="${keystore.path}" /> -->
-			<cm:property name="gateway.server.keystore.target.location" value="/home/mcostell" />
+			<cm:property name="gateway.server.keystore.target.location" value="${keystore.path}" />
 			<cm:property name="gateway.server.keystore.filename" value="keystore.jks" />
 			<cm:property name="gateway.server.truststore.filename" value="cacerts.jks" />
 			<cm:property name="gateway.server.keystore.password" value="0r1g4m1C0ff33cup" />
