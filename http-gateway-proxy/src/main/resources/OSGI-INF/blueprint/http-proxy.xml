@@ -1,10 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
 	xsi:schemaLocation="
 		http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-		http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+		http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
+		http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
 
+	<cm:property-placeholder persistent-id="com.redhat.cigna.httpgateway">
+		<cm:default-properties>
+			<!-- jetty ssl configuration  -->
+			<cm:property name="gateway.server.bind.address" value="0.0.0.0" />
+			<cm:property name="gateway.server.bind.address.port" value="9000" />
+			<cm:property name="gateway.server.keystore.target.location" value="${keystore.path}" />
+			<cm:property name="gateway.server.keystore.filename" value="keystore.jks" />
+			<cm:property name="gateway.server.truststore.filename" value="cacerts.jks" />
+			<cm:property name="gateway.server.keystore.password" value="0r1g4m1C0ff33cup" />
+			<cm:property name="gateway.server.truststore.password" value="0r1g4m1C0ff33cup" />
+			<cm:property name="gateway.server.client.auth.needed" value="false" />
+			<cm:property name="gateway.placeholder.algorithm" value="PBEWithMD5AndDES" />
+		</cm:default-properties>
+	</cm:property-placeholder>
+	<!-- wire up jetty for ssl -->
+	<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
+        <property name="sslSocketConnectorProperties">
+            <map>
+                <entry key="password" value="${gateway.server.keystore.password}"/>
+                <entry key="keyPassword" value="${gateway.server.keystore.password}"/>
+                <entry key="keystore" value="${gateway.server.keystore.target.location}/${gateway.server.keystore.filename}"/>
+                <!-- mcostell for mutual auth -->
+                <!--  -<enntry key="truststore" value="etc/certs/truststore.jks"/>
+                <entry key="trustPassword" value="trust123"/> -->
+                <entry key="needClientAuth" value="${gateway.server.client.auth.needed}"/>
+            </map>
+        </property>
+    </bean>
+	
+	<!-- mcostell recipient creator bean -->
     <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
+	
 	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
          <onException>
 		    <exception>java.lang.Exception</exception>
@@ -21,7 +54,7 @@
 		    </transform>
 	    </onException>
         <route id="HttpProxyRoute">
-            <from uri="jetty:http://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
+            <from uri="jetty:https://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
             <log message="Going to send to ${header.recipientList}" />
             <setHeader headerName="recipientList">
                 <method ref="recipientCreator" method="routePlease" />
