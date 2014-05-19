@@ -13,11 +13,11 @@
 		      <constant>true</constant>
 		    </handled>
 		    <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-		    	<constant>404</constant> <!-- TODO mcostello does this make sense -->
+		    	<constant>404</constant> 
 		    </setHeader>
 		    <!-- mcostell this will deliver the http response back -->
 		    <transform>
-		    	<simple>Unable to Lookup endpoint</simple>
+		    	<simple>Unable to Lookup Endpoint</simple>
 		    </transform>
 	    </onException>
         <route id="HttpProxyRoute">
