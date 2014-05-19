@@ -19,7 +19,7 @@
 			<cm:property name="gateway.server.client.auth.needed" value="false" />
 			<cm:property name="gateway.placeholder.algorithm" value="PBEWithMD5AndDES" />
 		</cm:default-properties>
-	</cm:property-placeholder>
+	</cm:property-placeholder> 
 	<!-- wire up jetty for ssl -->
 	<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
         <property name="sslSocketConnectorProperties">
