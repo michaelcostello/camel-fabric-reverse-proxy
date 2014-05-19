@@ -11,7 +11,8 @@
 			<!-- jetty ssl configuration  -->
 			<cm:property name="gateway.server.bind.address" value="0.0.0.0" />
 			<cm:property name="gateway.server.bind.address.port" value="9000" />
-			<cm:property name="gateway.server.keystore.target.location" value="${keystore.path}" />
+			<!-- <cm:property name="gateway.server.keystore.target.location" value="${keystore.path}" /> -->
+			<cm:property name="gateway.server.keystore.target.location" value="/home/mcostell" />
 			<cm:property name="gateway.server.keystore.filename" value="keystore.jks" />
 			<cm:property name="gateway.server.truststore.filename" value="cacerts.jks" />
 			<cm:property name="gateway.server.keystore.password" value="0r1g4m1C0ff33cup" />
@@ -54,7 +55,7 @@
 		    </transform>
 	    </onException>
         <route id="HttpProxyRoute">
-            <from uri="jetty:https://0.0.0.0:9000?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
+            <from uri="jetty:https://{{gateway.server.bind.address}}:{{gateway.server.bind.address.port}}?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
             <log message="Going to send to ${header.recipientList}" />
             <setHeader headerName="recipientList">
                 <method ref="recipientCreator" method="routePlease" />
