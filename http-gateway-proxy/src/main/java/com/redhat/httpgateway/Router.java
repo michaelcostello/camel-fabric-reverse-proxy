@@ -1,8 +1,6 @@
 package com.redhat.httpgateway;
 
 import org.apache.camel.Exchange;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.api.GetDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +11,21 @@ public class Router {
 
 
     private static final String BASE_FABRIC_NAME = "fabric:gateway";
+    private static final String BASE_CXF_CLUSTER = "fabric:gateway";
     private static final Logger LOG = LoggerFactory.getLogger(Router.class);
     
-    private CuratorFramework client; 
+    
 
     public String routePlease(Exchange exchange) {
 
         // delegate to method that will do name/mapping resolution
         return resolveEndpointName(exchange);
+    }
+    
+    public String routeGateway(Exchange exchange){
+    	String endpoint = BASE_CXF_CLUSTER;
+    	LOG.info("Endpoint that the recipient list will use: {}", endpoint);
+    	return endpoint;
     }
 
     private String resolveEndpointName(Exchange exchange) {

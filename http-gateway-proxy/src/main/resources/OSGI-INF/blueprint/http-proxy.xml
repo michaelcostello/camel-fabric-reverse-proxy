@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
-	xmlns:jaxws="http://cxf.apache.org/jaxws"
 	xsi:schemaLocation="
 		http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
 		http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
-		http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
-		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"">
+		http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
 
 	<cm:property-placeholder persistent-id="com.redhat.cigna.httpgateway">
 		<cm:default-properties>
@@ -40,15 +38,7 @@
 	<!-- mcostell recipient creator bean -->
     <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
     
-     <jaxws:client id="ClientProxyBeanID"
-        address="http://dummyaddress"
-        serviceClass="SEI">
-        <jaxws:features>
-            <ref bean="fabricLoadBalancerFeature" />
-        </jaxws:features>
-    </jaxws:client>
-	
-	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
+  	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
          <onException>
 		    <exception>java.lang.Exception</exception>
 		    <redeliveryPolicy maximumRedeliveries="2" />
@@ -80,7 +70,7 @@
         <!-- endpoints exposed in fabric-->
         <route id="testRoute" autoStartup="true">
             <from uri="fabric:gatewaytest:cxfrs:http://0.0.0.0:9001/?resourceClasses=com.redhat.httpgateway.TestCxfRsResource"/>
-            <log message="wooHoo!! did the routing correctly! for /test" />
+            <log message="routed properly for test" />
             <transform>
                 <constant>Test called successfully</constant>
             </transform>
@@ -88,7 +78,7 @@
         <route id="redHatRoute" autoStartup="true">
             <from uri="fabric:gatewayredhat:cxfrs:http://0.0.0.0:9002/?resourceClasses=com.redhat.httpgateway.RedHatCxfRsResource"/>
             <log message="routed properly to RedHat Endpoint" />
-            <transform>
+            <transform> 
                 <constant>RedHat called successfully</constant>
             </transform>
         </route>
@@ -100,12 +90,5 @@
             </transform>
         </route>
         
-        <route id=FabricProxyRoute>
-        	<from uri="jetty:https://{{gateway.server.bind.address}}:9004?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
-        	<to uri="direct:ClientProxyBeanID"/>
-        </route>
-    </camelContext>
-
-
-		
+       </camelContext>
 </blueprint>

@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 /**
  * Created by ceposta on 5/15/14.
  */
-@Path("/beer")
+@Path("/cigna")
 public class CignaCxfRsResource {
 
     @POST
