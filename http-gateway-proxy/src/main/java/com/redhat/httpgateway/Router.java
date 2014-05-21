@@ -11,12 +11,9 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by ceposta on 5/15/14.
- */
 public class Router {
 
-
+	private static final String BASE_HTTP_URI_FRAGMENT="http://localhost:";
     private static final String BASE_FABRIC_NAME = "fabric:gateway";
     private static final String BASE_CXF_CLUSTER = "fabric:gateway";
     private static final Logger LOG = LoggerFactory.getLogger(Router.class);
@@ -37,7 +34,9 @@ public class Router {
     public String routePlease(Exchange exchange) {
 
         // delegate to method that will do name/mapping resolution
-    	return endpointProperties.getProperty((String)exchange.getIn().getHeader(Exchange.HTTP_URI));
+    	String port = endpointProperties.getProperty((String)exchange.getIn().getHeader(Exchange.HTTP_URI));
+    	return BASE_HTTP_URI_FRAGMENT + port + exchange.getIn().getHeader(Exchange.HTTP_URI);
+    
     	
     }
     
