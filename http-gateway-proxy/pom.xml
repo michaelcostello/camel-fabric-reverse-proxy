@@ -16,6 +16,7 @@
         <fabric8.profile>gateway-camelproxy</fabric8.profile>
         <fabric8.features>camel-cxf camel-spring http camel-http camel-jetty </fabric8.features>
         <fabric8.parentProfiles>feature-camel</fabric8.parentProfiles>
+        <fabric8.profileConfigDir>src/main/</fabric8.profileConfigDir>
     </properties>
 
     <dependencies>
@@ -39,11 +40,7 @@
             <artifactId>camel-jetty</artifactId>
             <version>${camel.version}</version>
         </dependency>
-        <dependency>
-			<groupId>org.apache.curator</groupId>
-			<artifactId>curator-framework</artifactId>
-			<version>2.4.1</version>
-		</dependency>
+        
     </dependencies>
 
     <repositories>

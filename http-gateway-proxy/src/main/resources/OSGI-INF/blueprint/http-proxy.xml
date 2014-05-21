@@ -18,6 +18,7 @@
 			<cm:property name="gateway.server.truststore.password" value="0r1g4m1C0ff33cup" />
 			<cm:property name="gateway.server.client.auth.needed" value="false" /> 
 			<cm:property name="gateway.placeholder.algorithm" value="PBEWithMD5AndDES" />
+			<cm:property name="gateway.server.endpointlocations" value="/var/cigna/endpoints.properties"/>
 		</cm:default-properties> 
 	</cm:property-placeholder> 
 	<!-- wire up jetty for ssl -->
@@ -28,7 +29,7 @@
                 <entry key="keyPassword" value="${gateway.server.keystore.password}"/>
                 <entry key="keystore" value="${gateway.server.keystore.target.location}/${gateway.server.keystore.filename}"/>
                 <!-- mcostell for mutual auth -->
-                <!--  -<enntry key="truststore" value="etc/certs/truststore.jks"/>
+                <!--  -<entry key="truststore" value="etc/certs/truststore.jks"/>
                 <entry key="trustPassword" value="trust123"/> -->
                 <entry key="needClientAuth" value="${gateway.server.client.auth.needed}"/>
             </map>
@@ -36,7 +37,9 @@
     </bean>
 	
 	<!-- mcostell recipient creator bean -->
-    <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
+    <bean id="recipientCreator" class="com.redhat.httpgateway.Router" init-method="init">
+    	<property name="endpointFileLocation" value="${gateway.server.endpointlocations}"/>
+    </bean>
     
   	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
          <onException>
