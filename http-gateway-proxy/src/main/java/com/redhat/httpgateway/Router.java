@@ -28,7 +28,7 @@ public class Router {
     
     public void init() throws Exception{
     	InputStream fileInput = new FileInputStream(endpointLocation); 
-    	
+    	 
     	endpointProperties.load(fileInput);
     	
     }
