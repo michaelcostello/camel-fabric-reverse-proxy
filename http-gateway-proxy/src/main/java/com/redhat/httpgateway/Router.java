@@ -1,6 +1,8 @@
 package com.redhat.httpgateway;
 
 import org.apache.camel.Exchange;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.api.GetDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,8 @@ public class Router {
 
     private static final String BASE_FABRIC_NAME = "fabric:gateway";
     private static final Logger LOG = LoggerFactory.getLogger(Router.class);
+    
+    private CuratorFramework client; 
 
     public String routePlease(Exchange exchange) {
 
@@ -26,4 +30,6 @@ public class Router {
         LOG.info("Endpoint that the recipient list will use: {}", endpoint);
         return endpoint;
     }
+    
+    
 }

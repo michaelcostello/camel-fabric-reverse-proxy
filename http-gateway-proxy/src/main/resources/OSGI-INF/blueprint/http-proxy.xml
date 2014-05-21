@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
 	xsi:schemaLocation="
 		http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
 		http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
-		http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
+		http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"">
 
 	<cm:property-placeholder persistent-id="com.redhat.cigna.httpgateway">
 		<cm:default-properties>
@@ -16,9 +18,9 @@
 			<cm:property name="gateway.server.truststore.filename" value="cacerts.jks" />
 			<cm:property name="gateway.server.keystore.password" value="0r1g4m1C0ff33cup" />
 			<cm:property name="gateway.server.truststore.password" value="0r1g4m1C0ff33cup" />
-			<cm:property name="gateway.server.client.auth.needed" value="false" />
+			<cm:property name="gateway.server.client.auth.needed" value="false" /> 
 			<cm:property name="gateway.placeholder.algorithm" value="PBEWithMD5AndDES" />
-		</cm:default-properties>
+		</cm:default-properties> 
 	</cm:property-placeholder> 
 	<!-- wire up jetty for ssl -->
 	<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -37,11 +39,19 @@
 	
 	<!-- mcostell recipient creator bean -->
     <bean id="recipientCreator" class="com.redhat.httpgateway.Router"/>
+    
+     <jaxws:client id="ClientProxyBeanID"
+        address="http://dummyaddress"
+        serviceClass="SEI">
+        <jaxws:features>
+            <ref bean="fabricLoadBalancerFeature" />
+        </jaxws:features>
+    </jaxws:client>
 	
 	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
          <onException>
 		    <exception>java.lang.Exception</exception>
-		    <redeliveryPolicy maximumRedeliveries="1" />
+		    <redeliveryPolicy maximumRedeliveries="2" />
 		    <handled>
 		      <constant>true</constant>
 		    </handled>
@@ -75,19 +85,24 @@
                 <constant>Test called successfully</constant>
             </transform>
         </route>
-        <route id="cheeseRoute" autoStartup="true">
-            <from uri="fabric:gatewaycheese:cxfrs:http://0.0.0.0:9002/?resourceClasses=com.redhat.httpgateway.CheeseCxfRsResource"/>
-            <log message="wooHoo!! did the routing correctly! for /cheese" />
+        <route id="redHatRoute" autoStartup="true">
+            <from uri="fabric:gatewayredhat:cxfrs:http://0.0.0.0:9002/?resourceClasses=com.redhat.httpgateway.RedHatCxfRsResource"/>
+            <log message="routed properly to RedHat Endpoint" />
             <transform>
-                <constant>Cheese called successfully</constant>
+                <constant>RedHat called successfully</constant>
             </transform>
         </route>
-        <route id="beerRoute" autoStartup="true">
-            <from uri="fabric:gatewaybeer:cxfrs:http://0.0.0.0:9003/?resourceClasses=com.redhat.httpgateway.BeerCxfRsResource"/>
-            <log message="wooHoo!! did the routing correctly! for /beer" />
+        <route id="cignaRoute" autoStartup="true">
+            <from uri="fabric:gatewaycigna:cxfrs:http://0.0.0.0:9003/?resourceClasses=com.redhat.httpgateway.CignaCxfRsResource"/>
+            <log message="routed properly to Cigna endpoint" />
             <transform>
-                <constant>Beer called successfully</constant>
+                <constant>Cigna called successfully</constant>
             </transform>
+        </route>
+        
+        <route id=FabricProxyRoute>
+        	<from uri="jetty:https://{{gateway.server.bind.address}}:9004?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
+        	<to uri="direct:ClientProxyBeanID"/>
         </route>
     </camelContext>
 
