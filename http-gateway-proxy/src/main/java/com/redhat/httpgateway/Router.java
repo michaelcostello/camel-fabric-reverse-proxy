@@ -27,26 +27,24 @@ public class Router {
     	InputStream fileInput = new FileInputStream(endpointFileLocation); 
     	 
     	endpointProperties.load(fileInput);
-    	
+    	 
     }
+    
     
 
     public String routePlease(Exchange exchange) {
-    	log.info("entered route please");
-        // delegate to method that will do name/mapping resolution
-    	String port = endpointProperties.getProperty((String)exchange.getIn().getHeader(Exchange.HTTP_URI));
-    	String result= BASE_HTTP_URI_FRAGMENT + port + exchange.getIn().getHeader(Exchange.HTTP_URI);
-    	log.info(result);
-    	return result;  
+    	  return resolveEndpointName(exchange);
     	 
     }
     
     private String resolveEndpointName(Exchange exchange) {
         // REAL CODE FOR MAPPING CAN GO HERE
-        String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-        String endpoint = BASE_FABRIC_NAME + path.replaceFirst("/", "");
-        log.info("Endpoint that the recipient list will use: {}", endpoint);
-        return endpoint;
+    	log.info("entered route please");
+        // delegate to method that will do name/mapping resolution
+    	String port = endpointProperties.getProperty((String)exchange.getIn().getHeader(Exchange.HTTP_URI));
+    	String result= BASE_HTTP_URI_FRAGMENT + port + exchange.getIn().getHeader(Exchange.HTTP_URI);
+    	log.info(result);
+    	return result;
     }
 
 
