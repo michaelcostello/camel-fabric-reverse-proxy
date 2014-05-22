@@ -43,7 +43,7 @@
     
   	<camelContext id="httpGatewayContext" xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true">
          <onException>
-		    <exception>java.lang.Exception</exception>
+		    <exception>com.redhat.httpgateway.exception.BindingException</exception>
 		    <redeliveryPolicy maximumRedeliveries="2" />
 		    <handled>
 		      <constant>true</constant>
@@ -58,6 +58,7 @@
 	    </onException>
         <route id="HttpProxyRoute">
             <from uri="jetty:https://{{gateway.server.bind.address}}:{{gateway.server.bind.address.port}}?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
+            <!-- <from uri="jetty:https://{{gateway.server.bind.address}}:{{gateway.server.bind.address.port}}?bridgeEndpoint=true"/>-->
             <log message="Going to send to ${header.recipientList}" />
             <setHeader headerName="recipientList">
                 <method ref="recipientCreator" method="routePlease" />
