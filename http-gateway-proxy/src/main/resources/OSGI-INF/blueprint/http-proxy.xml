@@ -18,7 +18,7 @@
 			<cm:property name="gateway.server.truststore.password" value="0r1g4m1C0ff33cup" />
 			<cm:property name="gateway.server.client.auth.needed" value="false" /> 
 			<cm:property name="gateway.placeholder.algorithm" value="PBEWithMD5AndDES" />
-			<cm:property name="gateway.server.endpointlocations" value="/var/cigna/endpoints.properties"/>
+			<cm:property name="gateway.server.endpointlocations" value="/var/cigna/endpoints.cfg"/>
 		</cm:default-properties> 
 	</cm:property-placeholder> 
 	<!-- wire up jetty for ssl -->
