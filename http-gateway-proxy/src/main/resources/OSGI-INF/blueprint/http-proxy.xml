@@ -32,6 +32,7 @@
                 <!--  -<entry key="truststore" value="etc/certs/truststore.jks"/>
                 <entry key="trustPassword" value="trust123"/> -->
                 <entry key="needClientAuth" value="${gateway.server.client.auth.needed}"/>
+                <entry key="wantClientAuth " value="${gateway.server.client.auth.wanted}"/>
             </map>
         </property>
     </bean>
@@ -64,10 +65,15 @@
                 <method ref="recipientCreator" method="routePlease" />
             </setHeader>
             <removeHeader headerName="Host" />
-            <recipientList>
-                <simple>${header.recipientList}</simple>
-            </recipientList>
- 
+            <doTry>
+            	<recipientList>
+                	<simple>${header.recipientList}</simple>
+            	</recipientList>
+            </doTry>
+            <doCatch>
+            	
+            </doCatch>
+           
         </route>
 
 

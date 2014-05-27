@@ -27,7 +27,7 @@ public class Router {
       	endpointProperties.load(fileInput);
     } 
     
-  
+   
     public String routePlease(Exchange exchange) throws Exception{
     	  return resolveEndpointName(exchange);
     	  
