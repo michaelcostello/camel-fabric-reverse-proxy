@@ -7,8 +7,8 @@ import javax.ws.rs.Path;
 /**
  * Created by ceposta on 5/15/14.
  */
-@Path("/cigna")
-public class CignaCxfRsResource {
+@Path("/some")
+public class SomeCxfRsResource {
 
     @POST
     public String testMe(String payload) {
